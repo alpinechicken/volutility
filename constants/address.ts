@@ -1,0 +1,159 @@
+import { CHAIN_ID } from './numbers'
+
+export enum NETWORK {
+  MAINNET = 1,
+  ROPSTEN = 3,
+  GOERLI = 5,
+}
+
+const getAddress = (addr: { 1: string; 3: string; 5: string }) => {
+  return addr[CHAIN_ID as NETWORK]!
+}
+
+export const CONTROLLER = getAddress({
+  1: '0x64187ae08781B09368e6253F9E94951243A493D5',
+  3: '0x59F0c781a6eC387F09C40FAA22b7477a2950d209',
+  5: '0x6fc3f76f8a2d256cc091bd58bab8c2bc3f51d508',
+})
+
+export const SHORT_SQUEETH = getAddress({
+  1: '0xa653e22A963ff0026292Cc8B67941c0ba7863a38 ',
+  3: '',
+  5: '0xe85595e810B77cf606D0aFd7eB575BB025323beE',
+})
+
+export const OSQUEETH = getAddress({
+  1: '0xf1B99e3E573A1a9C5E6B2Ce818b617F0E664E86B',
+  3: '0xa4222f78d23593e82Aa74742d25D06720DCa4ab7',
+  5: '0x9421c968d28dd789363fbd8c9aa5cf2090f0a656',
+})
+
+export const CRAB_STRATEGY = getAddress({
+  1: '0xf205ad80bb86ac92247638914265887a8baa437d',
+  3: '0xbffBD99cFD9d77c49595dFe8eB531715906ca4Cf',
+  5: '0x74b9e08b801b0df247A14c0f91E7143ea95C946B',
+})
+
+export const ORACLE = getAddress({
+  1: '0x65D66c76447ccB45dAf1e8044e918fA786A483A1',
+  3: '0xBD9F4bE886653177D22fA9c79FD0DFc41407fC89',
+  5: '0xf7f94b4607bcd1235212803be8fd1b54d1d01b77',
+})
+
+export const UNI_NFT_MANAGER = getAddress({
+  1: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+  3: '',
+  5: '0x24a66308bab3bebc2821480ada395bf1c4ff8bf2', // Using our local deployment not uniswap
+})
+
+
+export const SWAP_ROUTER = getAddress({
+  1: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
+  3: '',
+  5: '0x833a158da5cebc44901211427e9df936023ec0d3', // Using our local deployment not uniswap
+})
+
+export const SQUEETH_UNI_POOL = getAddress({
+  1: '0x82c427AdFDf2d245Ec51D8046b41c4ee87F0d29C',
+  3: '0x921c384F79de1BAe96d6f33E3E5b8d0B2B34cb68',
+  5: '0xc3c29372b5138d48993f0699a129b9eadf5191bf',
+})
+
+export const WETH = getAddress({
+  1: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  3: '0xc778417e063141139fce010982780140aa0cd5ab',
+  5: '0x083fd3D47eC8DC56b572321bc4dA8b26f7E82103',
+})
+
+export const WETH_USDC_POOL = getAddress({
+  1: '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8',
+  3: '0x8356AbC730a218c24446C2c85708F373f354F0D8',
+  5: '0x5d3EfE9157003f05be0d4031F00D43F952d6F6b7',
+})
+
+export const USDC = getAddress({
+  1: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  3: '0x27415c30d8c87437becbd4f98474f26e712047f4',
+  5: '0x306bf03b689f7d7e5e9D3aAC87a068F16AFF9482',
+})
+
+export const CRAB_MIGRATION = getAddress({
+  1: '0xa1cab67a4383312718a5799eaa127906e9d4b19e',
+  3: '0xD0fb9d47B5F65d76C6bDf1b9E43a4A2345080B2f',
+  5: '',
+})
+
+export const CRAB_STRATEGY_V2 = getAddress({
+  1: '0x3b960e47784150f5a63777201ee2b15253d713e8',
+  3: '0xdd1e9c25115e0d6e531d9f9e6ab7dbbed15158ce',
+  5: '0x3ff39f6bf8156bda997d93e3eff6904c2bc4481f',
+})
+
+export const CRAB_OTC = getAddress({
+  1: '0x46f09e866623a9CD3d316b7392937Ce78Ec834a7',
+  3: '0x4c842457211b4fB8686aC4Af75FDAC6f2F827BeB',
+  5: '0xe23dd6e59436a2cbc000c8ce20f5217beb68177e',
+})
+
+export const CRAB_NETTING = getAddress({
+  1: '0x6e536addb53d1b47d357cdca83bcf460194a395f',
+  3: '',
+  5: '0xe78bf6383bf78376ca0062a7984cfdcab39b9bf0',
+})
+
+export const QUOTER = getAddress({
+  1: '0xC8d3a4e6BB4952E3658CCA5081c358e6935Efa43',
+  3: '0x267aEB76BEb6DC7Ab0D88FeEaC8A948e237e2d69',
+  5: '0x759442726c06f7938cd2cb63ac9ae373dc1decf6',
+})
+
+export const BULL_STRATEGY = getAddress({
+  1: '0xb46Fb07b0c80DBC3F97cae3BFe168AcaD46dF507',
+  3: '',
+  5: '0x2a5AD7582a9e42944Ee32671436593D16999c70a',
+})
+
+export const AUCTION_BULL = getAddress({
+  1: '0x6cd0890054d308264cD68B0b6ba38A36860593ec',
+  3: '',
+  5: '0xE5E4302933aef104Bb93181Ae9E8A664E42c8d9C',
+})
+
+export const WETH_E_TOKEN = getAddress({
+  1: '0x1b808F49ADD4b8C6b5117d9681cF7312Fcf0dC1D',
+  3: '',
+  5: '0xef5e087d827194732bc1843351cca80982e154eb',
+})
+
+export const USDC_D_TOKEN = getAddress({
+  1: '0x84721A3dB22EB852233AEAE74f9bC8477F8bcc42',
+  3: '',
+  5: '0x356079240635b276a63065478471d89340443c49',
+})
+
+const getCrabCouncilMembers = () => {
+  if (CHAIN_ID === NETWORK.MAINNET) {
+    return [
+      '0xAfE66363c27EedB597a140c28B70b32F113fd5a8',
+      '0x0144571202B48d8B3EEE3A95E4140B7144F8b72F',
+      '0x1F63BC5b8285591227684F3c2E3ce24e282c48E5',
+      '0x5B983F6b33F1e8A8588E4aBd5a1E2bE40D8B4059',
+      '0x66e981D4f93bFEA60cBe839e27E81D4Ce72cc7f9',
+      '0xd5FfEC6919a595bA449889EaDc814abe769Af7cd',
+    ]
+  } else if (CHAIN_ID === NETWORK.ROPSTEN) {
+    return ['0x56a847c21a4FA937c11258d94C8B1650cdbA21F7', '0x5B983F6b33F1e8A8588E4aBd5a1E2bE40D8B4059']
+  } else if (CHAIN_ID === NETWORK.GOERLI) {
+    return [
+      '0xE0Ed5c7B97d72386E2D9C112E3e18dd317c6520d',
+      '0x4D99d767477Fbb2B47EFeb17E2a78970AD22CCc1',
+      '0x1F63BC5b8285591227684F3c2E3ce24e282c48E5',
+      '0xEa2efa0D31F56cE31af8C87D555ba357D4a4aa59',
+      '0x56a847c21a4FA937c11258d94C8B1650cdbA21F7',
+      '0x7A715777B6Aa892E83C46A11105663c9b9292C17',
+      '0x6b483A5EAe724305175A36Cf29F9A31648914f43',
+    ]
+  }
+}
+
+export const CRAB_COUNCIL_MEMBERS = getCrabCouncilMembers()
