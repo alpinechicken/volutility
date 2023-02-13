@@ -14,7 +14,7 @@ import nftPositionManager  from '../abis/nonFungiblePositionManager.json';
 
 // import { erc20ABI } from 'wagmi';
 import { INDEX_SCALE, FUNDING_PERIOD, MAX_UINT, ETH_OSQTH_FEE } from '../constants/numbers';
-import { OSQUEETH, WETH, CONTROLLER, SQUEETH_UNI_POOL, WETH_USDC_POOL, SHORT_SQUEETH, SWAP_ROUTER, UNI_NFT_MANAGERI, UNI_NFT_MANAGER } from '../constants/address';
+import { OSQUEETH, WETH, CONTROLLER, SQUEETH_UNI_POOL, WETH_USDC_POOL, SHORT_SQUEETH, SWAP_ROUTER, UNI_NFT_MANAGER } from '../constants/address';
 
 import { CHAIN_ID } from '../constants/numbers';
 
@@ -100,13 +100,14 @@ const Home: NextPage = () => {
       args: [vaultData?.NftCollateralId]
       })
 
-  // TODO: Add LPs. Can't deposit LP uniTokenId=8 into vault 7 into vault for some reason says not allowed. Is uni position manager right on goerli controller?
+
+      const { data: swapRouterRead} = useContractRead({
+        address: SWAP_ROUTER,
+        abi: swapRouterAbi,
+        functionName: 'factory',
+        })
+
   // NonfungiblePositionManager: https://goerli.etherscan.io/address/0x24a66308bab3bebc2821480ada395bf1c4ff8bf2#readContract
-  // failing tx https://goerli.etherscan.io/tx/0xc2736363bfea88a0e9f97bf4a28f82d2926f622d6540864dac77e64c1720167f
-  // Fail with error 'ERC721: transfer caller is not owner nor approved'
-  // https://squeeth-uniswap.netlify.app/#/pool
-  // Suspect there's a problem with setup because controller doesn't have any uni nfts
- 
 
   // make readble things
   const normFactor = nf/1e18
@@ -122,28 +123,26 @@ const Home: NextPage = () => {
   const netWeth = (wethBalance?.value*1 + (vaultData?.collateralAmount || 0)*1)/1e18
 
   // test write
-  const exactOutputSingleParams = {
+  const exactInputSingleParams = {
     tokenIn: WETH,
     tokenOut: OSQUEETH,
-    fee: 3000,
-    recipient: myAddr?.toString(),
-    deadline: Math.floor(Date.now()/1000 +1800),
-    amountOut: parseInt('1000'),
-    amountInMaximum: parseInt('100000') ,
-    sqrtPriceLimitX9: 0,
+    fee: BigNumber.from(3000).toString(),
+    recipient: myAddr,
+    deadline: BigNumber.from(Math.floor(Date.now() / 1000 + 86400)).toString(),
+    amountIn: BigNumber.from(2000).toString(),
+    amountOutMinimum: BigNumber.from(0).toString() ,
+    sqrtPriceLimitX96: BigNumber.from(0).toString(),
   }
-
-
-  // // Buy 1 squeeth for weth
-  const {config} = usePrepareContractWrite({
-    address: '0x833a158da5cebc44901211427e9df936023ec0d3',
+// console.log(exactInputSingleParams);
+  const { config } = usePrepareContractWrite({
+    address: SWAP_ROUTER,
     abi: swapRouterAbi,
-    functionName: 'exactOutputSingle',
-    args: [exactOutputSingleParams],
+    functionName: 'exactInputSingle',
+    args: [exactInputSingleParams],
   });
 
-  const {write: buyVega, isSuccess, isError} = useContractWrite(config)
-  console.log(isSuccess, isError)
+  const {write: buyVega, isSuccess} = useContractWrite(config)
+
 
 
   // const { config } = usePrepareContractWrite({
@@ -172,6 +171,7 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Welcome to volutility 
         </h1>
+        <h2>A utility for your vol!</h2>
         <div>Balance: {squeethBalance?.formatted} {squeethBalance?.symbol}</div>
           <div> CHAIN_ID: {CHAIN_ID}</div>
           <div> normFactor: {normFactor}</div>s
@@ -196,7 +196,7 @@ const Home: NextPage = () => {
           <div> Uni nft tickLower: {uniNftData?.tickLower.toString()} </div>
           <div> Uni nft tickUpper: {uniNftData?.tickUpper.toString()} </div>
           <div> Uni nft liquidity: {uniNftData?.liquidity.toString()} </div>
-
+          {/* <div> swap router factory: {swapRouterRead?.toString()} </div> */}
           <div> <button
                   style ={{ marginTop: 24}}
                   className="button"
