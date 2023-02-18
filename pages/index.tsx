@@ -18,6 +18,8 @@ import { OSQUEETH, WETH, CONTROLLER, SQUEETH_UNI_POOL, WETH_USDC_POOL, SHORT_SQU
 
 import { CHAIN_ID } from '../constants/numbers';
 
+import { convertBigNumber, formatBigNumber, toBigNumber, calculateIV, formatNumber, wdiv } from '../utils/math'
+
 const Home: NextPage = () => {
   // This account
   const {isConnected, address: myAddr} = useAccount();
@@ -55,7 +57,7 @@ const Home: NextPage = () => {
     args: [7],
   })
 
-  const [shortSqueethAddr, setShortSqueethAddr] = useState(0)
+  // const [shortSqueethAddr, setShortSqueethAddr] = useState(0)
 
   // Get all short vaults
   // const { data: SHORT_SQUEETH } = useContractRead({
@@ -109,6 +111,12 @@ const Home: NextPage = () => {
 
   // NonfungiblePositionManager: https://goerli.etherscan.io/address/0x24a66308bab3bebc2821480ada395bf1c4ff8bf2#readContract
 
+  // Button to handle buys
+  const [buyAmount, setAmount] = useState(0);
+  const handleChange = (event) => {
+    setAmount(event.target.value);
+  };
+
   // make readble things
   const normFactor = nf/1e18
   const ethPrice = Math.sqrt(ind/1e10);
@@ -122,29 +130,36 @@ const Home: NextPage = () => {
   // TODO: add LP weth and eth. Deal with number types
   const netWeth = (wethBalance?.value*1 + (vaultData?.collateralAmount || 0)*1)/1e18
 
+  const slippage = 0.01
+  // const amountOfSqueethToBuy = buyAmount/(  vega  * oSqthEthPrice * ethPrice);
+  // const amountOfWethToPay = buyAmount/(  vega   * ethPrice) ;
+
   // test write
-  const exactInputSingleParams = {
+  const exactOutputSingleParams = {
     tokenIn: WETH,
     tokenOut: OSQUEETH,
     fee: BigNumber.from(3000).toString(),
     recipient: myAddr,
     deadline: BigNumber.from(Math.floor(Date.now() / 1000 + 86400)).toString(),
-    amountIn: BigNumber.from(2000).toString(),
-    amountOutMinimum: BigNumber.from(0).toString() ,
+    amountOut: (1e18*buyAmount/(oSqthEthPrice*  vega   * ethPrice) ||0).toString(),
+    // amountIn: BigNumber.from(1000).toString(),
+    amountInMaximum: ((1+slippage)*1e18*buyAmount/( vega   * ethPrice) ||0).toString() ,
     sqrtPriceLimitX96: BigNumber.from(0).toString(),
   }
 // console.log(exactInputSingleParams);
   const { config } = usePrepareContractWrite({
     address: SWAP_ROUTER,
     abi: swapRouterAbi,
-    functionName: 'exactInputSingle',
-    args: [exactInputSingleParams],
+    functionName: 'exactOutputSingle',
+    args: [exactOutputSingleParams],
   });
 
   const {write: buyVega, isSuccess} = useContractWrite(config)
 
 
 
+
+  // test write: unwrap some weth to eth
   // const { config } = usePrepareContractWrite({
   //   address: WETH,
   //   abi: weth9Abi,
@@ -153,6 +168,7 @@ const Home: NextPage = () => {
   // });
 
   // const {write: testWethWithdraw, isSuccess} = useContractWrite(config)
+
 
   return (
     <div className={styles.container}>
@@ -174,7 +190,7 @@ const Home: NextPage = () => {
         <h2>A utility for your vol!</h2>
         <div>Balance: {squeethBalance?.formatted} {squeethBalance?.symbol}</div>
           <div> CHAIN_ID: {CHAIN_ID}</div>
-          <div> normFactor: {normFactor}</div>s
+          <div> normFactor: {normFactor}</div>
           <div> eth price (from controller): {ethPrice}</div>
           <div> osqth price (from controller): {oSqthEthPrice} </div>
           <div> daily funding (from controller): {dailyFunding} </div>
@@ -197,14 +213,39 @@ const Home: NextPage = () => {
           <div> Uni nft tickUpper: {uniNftData?.tickUpper.toString()} </div>
           <div> Uni nft liquidity: {uniNftData?.liquidity.toString()} </div>
           {/* <div> swap router factory: {swapRouterRead?.toString()} </div> */}
+          <br></br>
+
+          <div> Dollar vega to buy:</div>
+
+          <input
+            type="text"
+            id="buyAmount"
+            name="buyAmount"
+            onChange={handleChange}
+            value={buyAmount}
+          />
+
           <div> <button
                   style ={{ marginTop: 24}}
                   className="button"
                   onClick={() => buyVega?.()}
                 >
-                  Test buy some squeeth
-                  </button> 
+                  buy some vega
+                </button> 
           </div>
+
+          <br></br>
+
+          <div> Amount of osqth to buy: {1e18*buyAmount/(  vega  * oSqthEthPrice * ethPrice)} </div>
+          <div> Amount of weth to sell: {(1e18*buyAmount/(  vega   * ethPrice) ||0).toString()} </div>
+          <div> Current loaded amountOut : {exactOutputSingleParams.amountOut}</div>
+
+
+          {/* <ul>
+                {people.map(p => (
+                    <li> {p} </li>
+                ))}
+            </ul> */}
           {/* <div>short power perp {shortSqueethAddr.toString()} </div> */}
 
         {/* <p className={styles.description}>
