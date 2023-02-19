@@ -48,8 +48,8 @@ export const UNI_NFT_MANAGER_CONTRACT = {
 }
 
 export const QUOTER_CONTRACT = {
-  addressOrName: QUOTER,
-  contractInterface: quoterAbi,
+  address: QUOTER,
+  abi: quoterAbi,
 }
 
 export const CRAB_V2_CONTRACT = {

@@ -1,15 +1,12 @@
 import { BigNumber } from 'ethers'
-import { USDC, WETH } from '../constants/address'
-import { DEFAULT_SLIPPAGE, ETH_USDC_FEE } from '../constants/numbers'
-import { ERC20, Quoter } from '../types/contracts'
+import { Quoter } from '../types/contracts'
 
 export async function quoteExactIn(
   quoter: Quoter,
   tokenIn: string,
   tokenOut: string,
   amountIn: BigNumber,
-  poolFee: number,
-  slippage = DEFAULT_SLIPPAGE,
+  poolFee: number
 ) {
   const { amountOut } = await quoter.callStatic.quoteExactInputSingle({
     tokenIn,
@@ -19,7 +16,7 @@ export async function quoteExactIn(
     sqrtPriceLimitX96: 0,
   })
 
-  return amountOut.mul(100 * (100 - slippage)).div(10000) // Include slippage
+  return (amountOut).mul(1) 
 }
 
 export async function quoteExactOut(
@@ -27,8 +24,7 @@ export async function quoteExactOut(
   tokenIn: string,
   tokenOut: string,
   amountOut: BigNumber,
-  poolFee: number,
-  slippage = DEFAULT_SLIPPAGE,
+  poolFee: number
 ) {
   const { amountIn } = await quoter.callStatic.quoteExactOutputSingle({
     tokenIn,
@@ -38,5 +34,5 @@ export async function quoteExactOut(
     sqrtPriceLimitX96: 0,
   })
 
-  return amountIn.mul(100 * (100 + slippage)).div(10000) // Include slippage
+  return (amountIn).mul(1)
 }

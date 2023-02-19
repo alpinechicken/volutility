@@ -36,7 +36,7 @@ const useController = () => {
   })
 
   const updateControllerData = React.useCallback(async () => {
-    console.log('reloading controller data')
+    console.log('reload controller state')
     const _nf = data[0] 
     const _index = data[1]
     const _mark = data[2]

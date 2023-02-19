@@ -69,6 +69,7 @@ const useInitAccount = () => {
 
 
   React.useEffect(() => {
+    console.log('reload account state')
     setOsqthBalance((squeethBalance as unknown as BigNumber) || BIG_ZERO)
     setWethBalance((wethBalance as unknown as BigNumber) || BIG_ZERO)
     setCrabBalance((crabStrategyV2Balance as unknown as BigNumber) || BIG_ZERO)
@@ -81,7 +82,8 @@ const useInitAccount = () => {
     setTickUpper((uniNftData?.tickUpper as unknown as BigNumber) || BIG_ZERO)
     setLiquidity((uniNftData?.liquidity as unknown as BigNumber) || BIG_ZERO)
 
-  }, [setOsqthBalance, setWethBalance, setCrabBalance, setNumberOfVaults, setVaultId, setVaultDebt, setVaultCollateral, setUniNftId, setTickLower])
+    // [setOsqthBalance, setWethBalance, setCrabBalance, setNumberOfVaults, setVaultId, setVaultDebt, setVaultCollateral, setUniNftId]
+  }, [])
 }
 
 export default useInitAccount
