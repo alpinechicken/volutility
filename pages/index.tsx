@@ -4,58 +4,121 @@ import { useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import { useAccount, usePrepareContractWrite, useContractWrite, useWaitForTransaction, useContractRead, useBalance, useContract, erc20ABI } from 'wagmi';
+import { useAccount, usePrepareContractWrite, useContractReads, useContractWrite, useWaitForTransaction, useContractRead, useBalance, useContract, useProvider, erc20ABI } from 'wagmi';
+
+
 import erc20Abi from '../abis/ERC20.json';
 import controllerAbi from '../abis/controller.json';
 import shortSqueethAbi from '../abis/shortSqueeth.json';
 import swapRouterAbi from '../abis/swapRouter.json';
 import weth9Abi from '../abis/weth9.json';
-import nftPositionManager  from '../abis/nonFungiblePositionManager.json';
+import quoterAbi from '../abis/quoter.json';
+import nftPositionManagerAbi  from '../abis/nonFungiblePositionManager.json';
 
-// import { erc20ABI } from 'wagmi';
+// import shallow from 'zustand/shallow'
+
 import { INDEX_SCALE, FUNDING_PERIOD, MAX_UINT, ETH_OSQTH_FEE } from '../constants/numbers';
-import { OSQUEETH, WETH, CONTROLLER, SQUEETH_UNI_POOL, WETH_USDC_POOL, SHORT_SQUEETH, SWAP_ROUTER, UNI_NFT_MANAGER } from '../constants/address';
+import { OSQUEETH, WETH, CONTROLLER, SQUEETH_UNI_POOL, WETH_USDC_POOL, SHORT_SQUEETH, SWAP_ROUTER, UNI_NFT_MANAGER, QUOTER } from '../constants/address';
+import { CONTROLLER_CONTRACT, OSQUEETH_CONTRACT, WETH_CONTRACT, CRAB_V2_CONTRACT } from '../constants/contracts'
 
 import { CHAIN_ID } from '../constants/numbers';
 
 import { convertBigNumber, formatBigNumber, toBigNumber, calculateIV, formatNumber, wdiv } from '../utils/math'
 
+import useControllerStore from '../store/controllerStore';
+import useController from '../hooks/useController';
+import useInitAccount from '../hooks/init/useInitAccount';
+import useAccountStore from '../store/accountStore';
+
 const Home: NextPage = () => {
+
+  // // Start controller
+  useController()
+
+  useInitAccount()
+  const nf = useControllerStore(s => s.normFactor)
+  const ind = useControllerStore(s => s.indexPrice)
+  const dnmark = useControllerStore(s => s.markPrice)
+
+
+  const wethBal_ = useAccountStore(s => s.wethBalance)
+  const osqBal_ = useAccountStore(s => s.oSqthBalance)
+  const crabBal_ = useAccountStore(s => s.crabBalance)
+  const vaultDebt_ = useAccountStore(s => s.vaultDebt)
+  const vaultCollateral_ = useAccountStore(s => s.vaultCollateral)
+  const numOfVaults_ = useAccountStore(s => s.numberOfVaults)
+  const vaultId_ = useAccountStore(s => s.vaultId)
+  const uniNftId_ = useAccountStore(s => s.uniNftId)
+  const tickLower_ = useAccountStore(s => s.tickLower)
+  const tickUpper_ = useAccountStore(s => s.tickUpper)
+  const liquidity_ = useAccountStore(s => s.liquidity)
+
+
   // This account
   const {isConnected, address: myAddr} = useAccount();
 
-  // ERC20 balance
-  const { data: squeethBalance, isLoading } = useBalance({
-    address: myAddr,
-    token: OSQUEETH
-  })
+  // // Controller reads
+  // const controllerContract = {
+  //   address: CONTROLLER,
+  //   abi: controllerAbi,
+  // }
 
-  // ERC20 balance
-  const { data: wethBalance } = useBalance({
-    address: myAddr,
-    token: WETH
-  })
+  // const { data, isError } = useContractReads({
+  //   contracts: [
+  //     {
+  //       ...controllerContract,
+  //       functionName: 'getExpectedNormalizationFactor',
+  //     },
+  //     {
+  //       ...controllerContract,
+  //       functionName: 'getIndex',
+  //       args: [1],
+  //     },
+  //     {
+  //       ...controllerContract,
+  //       functionName: 'getDenormalizedMark',
+  //       args: [1],
+  //     },
+  //   ],
+  // })
+
+  // const nf = data[0]
+  // const ind = data[1]
+  // const dnmark = data[2]
+
+  // // ERC20 balance
+  // const { data: squeethBalance, isLoading } = useBalance({
+  //   address: myAddr,
+  //   token: OSQUEETH
+  // })
+
+  // // ERC20 balance
+  // const { data: wethBalance } = useBalance({
+  //   address: myAddr,
+  //   token: WETH
+  // })
+
 
   // // Controller read
-  const { data: nf } = useContractRead({
-    address: CONTROLLER,
-    abi: controllerAbi,
-    functionName: 'getExpectedNormalizationFactor',
-  })
+  // const { data: nf } = useContractRead({
+  //   address: CONTROLLER,
+  //   abi: controllerAbi,
+  //   functionName: 'getExpectedNormalizationFactor',
+  // })
 
-  const { data: ind } = useContractRead({
-    address: CONTROLLER,
-    abi: controllerAbi,
-    functionName: 'getIndex',
-    args: [1],
-  })
+  // const { data: ind } = useContractRead({
+  //   address: CONTROLLER,
+  //   abi: controllerAbi,
+  //   functionName: 'getIndex',
+  //   args: [1],
+  // })
 
-  const { data: dnmark } = useContractRead({
-    address: CONTROLLER,
-    abi: controllerAbi,
-    functionName: 'getDenormalizedMark',
-    args: [7],
-  })
+  // const { data: dnmark } = useContractRead({
+  //   address: CONTROLLER,
+  //   abi: controllerAbi,
+  //   functionName: 'getDenormalizedMark',
+  //   args: [1],
+  // })
 
   // const [shortSqueethAddr, setShortSqueethAddr] = useState(0)
 
@@ -74,40 +137,19 @@ const Home: NextPage = () => {
   //   args: [1]
   // })
 
-  const { data: numOfVaults } = useContractRead({
-    address: SHORT_SQUEETH,
-    abi: shortSqueethAbi,
-    functionName: 'balanceOf',
-    args: [myAddr],
-  })
 
-  const { data: vaultInd} = useContractRead({
-    address: SHORT_SQUEETH,
-    abi: shortSqueethAbi,
-    functionName: 'tokenOfOwnerByIndex',
-    args: [myAddr, 1],
-    })
+//  const { data: numOfVaults } = useContractRead({
+//     address: SHORT_SQUEETH,
+//     abi: shortSqueethAbi,
+//     functionName: 'balanceOf',
+//     args: [myAddr],
+//   })
 
-    const { data: vaultData} = useContractRead({
-      address: CONTROLLER,
-      abi: controllerAbi,
-      functionName: 'vaults',
-      args: [vaultInd],
-      })
-
-    const { data: uniNftData} = useContractRead({
-      address: UNI_NFT_MANAGER,
-      abi: nftPositionManager,
-      functionName: 'positions',
-      args: [vaultData?.NftCollateralId]
-      })
-
-
-      const { data: swapRouterRead} = useContractRead({
-        address: SWAP_ROUTER,
-        abi: swapRouterAbi,
-        functionName: 'factory',
-        })
+      // const { data: swapRouterRead} = useContractRead({
+      //   address: SWAP_ROUTER,
+      //   abi: swapRouterAbi,
+      //   functionName: 'factory',
+      //   })
 
   // NonfungiblePositionManager: https://goerli.etherscan.io/address/0x24a66308bab3bebc2821480ada395bf1c4ff8bf2#readContract
 
@@ -119,22 +161,52 @@ const Home: NextPage = () => {
 
   // make readble things
   const normFactor = nf/1e18
-  const ethPrice = Math.sqrt(ind/1e10);
-  const oSqthEthPrice = dnmark*nf/(Math.sqrt(ind)*1e27);
+  const ethPrice = Math.sqrt(ind/1e18);
+  const oSqthEthPrice = dnmark*nf/(Math.sqrt(ind)*1e31);
   const dailyFunding = Math.log(dnmark/ind)/(FUNDING_PERIOD);
   const vol = Math.sqrt(Math.log(dnmark/ind)/(FUNDING_PERIOD/365.25))
   const vega = 2*vol*FUNDING_PERIOD/365.25 /100
-  const oSqthBalance = squeethBalance?.formatted 
+  const oSqthBalance = osqBal_?.formatted 
   // Just using one vault (TODO: add multiple vaults and LP)
-  const netOsqth = oSqthBalance- (vaultData?.shortAmount || 0)/1e18
+  const netOsqth = oSqthBalance- (vaultDebt_|| 0)/1e18
   // TODO: add LP weth and eth. Deal with number types
-  const netWeth = (wethBalance?.value*1 + (vaultData?.collateralAmount || 0)*1)/1e18
+  const netWeth = (wethBal_?.value*1 + (vaultCollateral_ || 0)*1)/1e18
 
   const slippage = 0.01
   // const amountOfSqueethToBuy = buyAmount/(  vega  * oSqthEthPrice * ethPrice);
   // const amountOfWethToPay = buyAmount/(  vega   * ethPrice) ;
 
-  // test write
+  // Exact out quote
+
+    // Exact out swap quote
+    // const quoteExactOutputSingleParams = {
+    //   tokenIn: WETH,
+    //   tokenOut: OSQUEETH,
+    //   fee: BigNumber.from(3000).toString(),
+    //   // amountOut: (1e18*1/(oSqthEthPrice*  vega   * ethPrice) ||0).toString(),
+    //   amountOut: BigNumber.from(1000).toString(),
+    //   sqrtPriceLimitX96: BigNumber.from(0).toString(),
+    // }
+
+    // const quoteExactOutputSingleParams = {
+    //   tokenIn: WETH,
+    //   tokenOut: OSQUEETH,
+    //   amount: BigNumber.from(1000).toString(),
+    //   fee: BigNumber.from(3000).toString(),
+    //   sqrtPriceLimitX96: 0,
+    // }
+
+    // const { config: configQuoteExactOutputSingle } = usePrepareContractWrite({
+    //   address: QUOTER,
+    //   abi: quoterAbi,
+    //   functionName: 'quoteExactOutputSingle',
+    //   args: [quoteExactOutputSingleParams]
+    // });
+
+    // const {data: quoteAmountOut, write: quoteOut} = useContractWrite(configQuoteExactOutputSingle)
+  
+
+  // Exact out swap
   const exactOutputSingleParams = {
     tokenIn: WETH,
     tokenOut: OSQUEETH,
@@ -146,7 +218,7 @@ const Home: NextPage = () => {
     amountInMaximum: ((1+slippage)*1e18*buyAmount/( vega   * ethPrice) ||0).toString() ,
     sqrtPriceLimitX96: BigNumber.from(0).toString(),
   }
-// console.log(exactInputSingleParams);
+
   const { config } = usePrepareContractWrite({
     address: SWAP_ROUTER,
     abi: swapRouterAbi,
@@ -155,7 +227,6 @@ const Home: NextPage = () => {
   });
 
   const {write: buyVega, isSuccess} = useContractWrite(config)
-
 
 
 
@@ -188,7 +259,8 @@ const Home: NextPage = () => {
           Welcome to volutility 
         </h1>
         <h2>A utility for your vol!</h2>
-        <div>Balance: {squeethBalance?.formatted} {squeethBalance?.symbol}</div>
+        <div>Balance: {osqBal_?.formatted} </div>
+        <div> weth bal storage: {wethBal_?.formatted}</div>
           <div> CHAIN_ID: {CHAIN_ID}</div>
           <div> normFactor: {normFactor}</div>
           <div> eth price (from controller): {ethPrice}</div>
@@ -198,26 +270,26 @@ const Home: NextPage = () => {
           <div>vega (from controller): {vega} </div>
 
 
-          <div>number of vaults: {numOfVaults?.toString()} </div>
+          <div>number of vaults: {numOfVaults_?.toString()} </div>
 
-          <div>vault index: {vaultInd?.toString()} </div>
-          <div>vault collateral: {vaultData?.collateralAmount.toString()} </div>
-          <div>vault debt: {vaultData?.shortAmount.toString()} </div>
-          <div>vault uni nft: {vaultData?.NftCollateralId.toString()} </div>
+          <div>vaultId: {vaultId_?.toString()} </div>
+          <div>vault collateral: {vaultCollateral_.toString()} </div>
+          <div>vault debt: {vaultDebt_.toString()} </div>
+          <div>vault uni nft: {uniNftId_.toString()} </div>
 
           <div>net osqth: {netOsqth.toString()} </div>
           <div>net weth: {netWeth.toString()} </div>
           <div> Long squeeth dollar vega: {vega * oSqthBalance * oSqthEthPrice * ethPrice}</div>
           <div> Net squeeth dollar vega: {vega * netOsqth * oSqthEthPrice * ethPrice}</div>
-          <div> Uni nft tickLower: {uniNftData?.tickLower.toString()} </div>
-          <div> Uni nft tickUpper: {uniNftData?.tickUpper.toString()} </div>
-          <div> Uni nft liquidity: {uniNftData?.liquidity.toString()} </div>
-          {/* <div> swap router factory: {swapRouterRead?.toString()} </div> */}
+          <div> Uni nft tickLower: {tickLower_.toString()} </div>
+          <div> Uni nft tickUpper: {tickUpper_.toString()} </div>
+          <div> Uni nft liquidity: {liquidity_.toString()} </div>
+
           <br></br>
 
           <div> Dollar vega to buy:</div>
 
-          <input
+          <input suppressHydrationWarning
             type="text"
             id="buyAmount"
             name="buyAmount"
@@ -225,7 +297,7 @@ const Home: NextPage = () => {
             value={buyAmount}
           />
 
-          <div> <button
+          <div> <button suppressHydrationWarning
                   style ={{ marginTop: 24}}
                   className="button"
                   onClick={() => buyVega?.()}
@@ -238,7 +310,16 @@ const Home: NextPage = () => {
 
           <div> Amount of osqth to buy: {1e18*buyAmount/(  vega  * oSqthEthPrice * ethPrice)} </div>
           <div> Amount of weth to sell: {(1e18*buyAmount/(  vega   * ethPrice) ||0).toString()} </div>
-          <div> Current loaded amountOut : {exactOutputSingleParams.amountOut}</div>
+          {/* <div> Current loaded amountOut : {exactOutputSingleParams.amountOut}</div> */}
+
+          {/* <div> <button
+                  style ={{ marginTop: 24}}
+                  className="button"
+                  onClick={() => quoteOut?.()}
+                >
+                  Get quote
+                </button> 
+          </div> */}
 
 
           {/* <ul>

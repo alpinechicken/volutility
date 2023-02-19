@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { useContract, useProvider } from 'wagmi'
-import { CONTROLLER } from '../constants/address'
-import { Controller } from '../types/contracts'
-import controllerAbi from '../abis/controller.json'
+import { useContractReads, useProvider } from 'wagmi'
+import { CONTROLLER_CONTRACT } from '../constants/contracts'
+// import { CONTROLLER } from '../constants/address'
+// import controllerAbi from '../abis/controller.json'
 import useControllerStore from '../store/controllerStore'
 import { INDEX_SCALE } from '../constants/numbers'
 
@@ -14,31 +14,43 @@ const useController = () => {
   const setLoaded = useControllerStore(s => s.setLoaded)
   const loaded = useControllerStore(state => state.loaded)
 
-  const controller = useContract<Controller>({
-    addressOrName: CONTROLLER,
-    contractInterface: controllerAbi,
-    signerOrProvider: provider,
+
+  const {refetch: getControllerData, data, isLoading } = useContractReads({
+    contracts: [
+      {
+        ...CONTROLLER_CONTRACT,
+        functionName: 'getExpectedNormalizationFactor',
+      },
+      {
+        ...CONTROLLER_CONTRACT,
+        functionName: 'getIndex',
+        args: [1],
+      },
+      {
+        ...CONTROLLER_CONTRACT,
+        functionName: 'getDenormalizedMark',
+        args: [1],
+      },
+    ],  enabled: false,
+
   })
 
   const updateControllerData = React.useCallback(async () => {
-    const p1 = controller.getExpectedNormalizationFactor()
-    const p2 = controller.getIndex(1)
-    const p3 = controller.getDenormalizedMark(1)
-
-    const [_nf, _index, _mark] = await Promise.all([p1, p2, p3])
+    console.log('reloading controller data')
+    const _nf = data[0] 
+    const _index = data[1]
+    const _mark = data[2]
     setNf(_nf)
     setIndexPrice(_index.mul(INDEX_SCALE).mul(INDEX_SCALE))
     setMarkPrice(_mark.mul(INDEX_SCALE).mul(INDEX_SCALE))
     setLoaded(true)
-  }, [controller, setIndexPrice, setLoaded, setMarkPrice, setNf])
+  }, [setIndexPrice, setLoaded, setMarkPrice, setNf])
 
   React.useEffect(() => {
     if (!loaded) updateControllerData()
   }, [loaded, updateControllerData])
+ return { getControllerData, data, isLoading}
 
-  return {
-    controller,
-  }
 }
 
 export default useController

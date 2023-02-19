@@ -104,7 +104,7 @@ export const CRAB_NETTING = getAddress({
 export const QUOTER = getAddress({
   1: '0xC8d3a4e6BB4952E3658CCA5081c358e6935Efa43',
   3: '0x267aEB76BEb6DC7Ab0D88FeEaC8A948e237e2d69',
-  5: '0x759442726c06f7938cd2cb63ac9ae373dc1decf6',
+  5: '0x759442726c06f7938cd2cb63ac9ae373dc1decf6', // koushiknet 0x61fFE014bA17989E743c5F6cB21bF9697530B21e
 })
 
 export const BULL_STRATEGY = getAddress({
