@@ -16,7 +16,7 @@ export async function quoteExactIn(
     sqrtPriceLimitX96: 0,
   })
 
-  return (amountOut).mul(1) 
+  return amountOut
 }
 
 export async function quoteExactOut(
@@ -34,5 +34,5 @@ export async function quoteExactOut(
     sqrtPriceLimitX96: 0,
   })
 
-  return (amountIn).mul(1)
+  return amountIn
 }

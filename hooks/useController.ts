@@ -7,12 +7,11 @@ import useControllerStore from '../store/controllerStore'
 import { INDEX_SCALE } from '../constants/numbers'
 
 const useController = () => {
-  const provider = useProvider()
   const setNf = useControllerStore(s => s.setNormFactor)
   const setIndexPrice = useControllerStore(s => s.setIndexPrice)
   const setMarkPrice = useControllerStore(s => s.setMarkPrice)
   const setLoaded = useControllerStore(s => s.setLoaded)
-  const loaded = useControllerStore(state => state.loaded)
+  const loaded = useControllerStore(s => s.loaded)
 
 
   const {refetch: getControllerData, data, isLoading } = useContractReads({

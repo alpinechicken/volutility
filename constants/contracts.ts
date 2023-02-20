@@ -5,7 +5,8 @@ import {
   QUOTER,
   CRAB_STRATEGY_V2,
   SHORT_SQUEETH,
-  UNI_NFT_MANAGER
+  UNI_NFT_MANAGER,
+  SQUEETH_UNI_POOL
 } from './address'
 import controllerAbi from '../abis/controller.json'
 import erc20Abi from '../abis/ERC20.json'
@@ -13,7 +14,8 @@ import quoterAbi from '../abis/quoter.json'
 import crabV2Abi from '../abis/crabStrategyV2.json'
 import shortSqueethAbi from '../abis/shortSqueeth.json'
 import nonFungiblePositionManagerAbi from '../abis/nonFungiblePositionManager.json'
- 
+import uniswapPoolAbi from '../abis/uniswapPool.json'
+
 // Need to implement for other contracts as well
 
 export const CONTROLLER_CONTRACT = {
@@ -21,10 +23,10 @@ export const CONTROLLER_CONTRACT = {
   abi: controllerAbi,
 }
 
-// export const CONTROLLER_CONTRACT = {
-//   addressOrName: CONTROLLER,
-//   contractInterface: controllerAbi,
-// }
+export const SQUEETH_UNI_POOL_CONTRACT = {
+  address: SQUEETH_UNI_POOL,
+  abi: uniswapPoolAbi,
+}
 
 export const OSQUEETH_CONTRACT = {
   addressOrName: OSQUEETH,
