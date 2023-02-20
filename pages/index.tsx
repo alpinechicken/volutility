@@ -49,6 +49,9 @@ const Home: NextPage = () => {
   const wethBal_ = useAccountStore(s => s.wethBalance)
   const osqBal_ = useAccountStore(s => s.oSqthBalance)
   const crabBal_ = useAccountStore(s => s.crabBalance)
+  const crabEth_ = useAccountStore(s => s.crabEth)
+  const crabOsqth_ = useAccountStore(s => s.crabOsqth)
+
   const vaultDebt_ = useAccountStore(s => s.vaultDebt)
   const vaultCollateral_ = useAccountStore(s => s.vaultCollateral)
   const numOfVaults_ = useAccountStore(s => s.numberOfVaults)
@@ -144,6 +147,10 @@ const Home: NextPage = () => {
     <div> osqth price (from slot0): {oSqthEthPrice} </div>
     <div> daily funding (from slot0): {dailyFunding} </div>
     <div>vega (from slot0): {vega} </div>
+    <div>crab balance: {crabBal_?.formatted} </div>
+    <div>crab eth: {crabEth_.toString()} </div>
+    <div>crab osqth: {crabOsqth_.toString()} </div>
+
     <div>number of vaults: {numOfVaults_?.toString()} </div>
     <div>vaultId: {vaultId_?.toString()} </div>
     <div>vault collateral: {vaultCollateral_.toString()} </div>
@@ -210,7 +217,7 @@ const Home: NextPage = () => {
 
           <br></br>
           <div> Vol on uniswap : {(vol*100).toFixed(1)}% </div>
-          <div> Vol to trade this size: {(quoteVol*100).toFixed(1)}% </div>
+          <div> Vol for this size: {(quoteVol*100).toFixed(1)}% </div>
           <div> Vol impact: {((quoteVol-vol)*100).toFixed(1).toString()}% </div>
 
 
