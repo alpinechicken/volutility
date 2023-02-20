@@ -76,8 +76,8 @@ const useAccountStore = create<AccountState>(set => ({
   setTickLower: tl => set({tickLower: tl}),
   setTickUpper: tu => set({tickUpper: tu}),
   setLiquidity: l => set({liquidity: l}),
-  setUniswapEth: ue => set({tickUpper: ue}),
-  setUniswapOsqth: uo => set({liquidity: uo})
+  setUniswapEth: ue => set({uniswapEth: ue}),
+  setUniswapOsqth: uo => set({uniswapOsqth: uo})
 }))
 
 export default useAccountStore

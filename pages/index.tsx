@@ -47,6 +47,8 @@ const Home: NextPage = () => {
   const ind = useControllerStore(s => s.indexPrice)
   const dnmark = useControllerStore(s => s.markPrice)
   const wethBal_ = useAccountStore(s => s.wethBalance)
+  const ethBal_ = useAccountStore(s => s.ethBalance)
+
   const osqBal_ = useAccountStore(s => s.oSqthBalance)
   const crabBal_ = useAccountStore(s => s.crabBalance)
   const crabEth_ = useAccountStore(s => s.crabEth)
@@ -60,7 +62,8 @@ const Home: NextPage = () => {
   const tickLower_ = useAccountStore(s => s.tickLower)
   const tickUpper_ = useAccountStore(s => s.tickUpper)
   const liquidity_ = useAccountStore(s => s.liquidity)
-
+  const uniswapEth_ = useAccountStore(s => s.uniswapEth)
+  const uniswapOsqth_ = useAccountStore(s => s.uniswapOsqth)
   // This account
   const {isConnected, address: myAddr} = useAccount();
 
@@ -104,11 +107,11 @@ const Home: NextPage = () => {
 
 
   const oSqthBalance = osqBal_?.formatted 
-  // Just using one vault (TODO: add multiple vaults and LP)
-  const netOsqth = oSqthBalance- (vaultDebt_|| 0)/1e18
+  // Just using one vault (TODO: add multiple vaults)
+  const netOsqth = oSqthBalance- (vaultDebt_|| 0)/1e18 +(uniswapOsqth_ || 0)/1e18 - (crabOsqth_ ||0)/1e18
   // TODO: add LP weth and eth. Deal with number types
-  const netWeth = (wethBal_?.value*1 + (vaultCollateral_ || 0)*1)/1e18
-
+  const netWethAndEth = (wethBal_?.value ||0)/1e18 + (ethBal_?.value)/1e18 + (vaultCollateral_||0)/1e18 + (uniswapEth_ || 0)/1e18 + (crabEth_ || 0)/1e18
+  // console.log((wethBal_?.value ||0)/1e18, (ethBal_?.value)/1e18,(vaultCollateral_||0)/1e18,(uniswapEth_ || 0)/1e18), (crabEth_ || 0)/1e18
   const slippage = 0.01
   // const amountOfSqueethToBuy = buyAmount/(  vega  * oSqthEthPrice * ethPrice);
   // const amountOfWethToPay = buyAmount/(  vega   * ethPrice) ;
@@ -139,9 +142,9 @@ const Home: NextPage = () => {
 
     <div>
           <br></br>
-    <div>Balance: {osqBal_?.formatted} </div>
-    <div> weth bal storage: {wethBal_?.formatted}</div>
     <div> CHAIN_ID: {CHAIN_ID}</div>
+    <div> Osqth balance: {osqBal_?.formatted} </div>
+    <div> weth bal : {wethBal_?.formatted}</div>
     <div> normFactor: {normFactor}</div>
     <div> eth price (from controller): {ethPrice}</div>
     <div> osqth price (from slot0): {oSqthEthPrice} </div>
@@ -156,8 +159,13 @@ const Home: NextPage = () => {
     <div>vault collateral: {vaultCollateral_.toString()} </div>
     <div>vault debt: {vaultDebt_.toString()} </div>
     <div>vault uni nft: {uniNftId_.toString()} </div>
+    <div>Uniswap eth: {uniswapEth_.toString()} </div>
+    <div>Uniswap osqth: {uniswapOsqth_.toString()} </div>
+    <div>Crab eth: {crabEth_.toString()} </div>
+    <div>Crab oSqth: {crabOsqth_.toString()} </div>
+
     <div>net osqth: {netOsqth.toString()} </div>
-    <div>net weth: {netWeth.toString()} </div>
+    <div>net weth and eth: {netWethAndEth.toString()} </div>
     <div> Long squeeth dollar vega: {vega * oSqthBalance * oSqthEthPrice * ethPrice}</div>
     <div> Uni nft tickLower: {tickLower_.toString()} </div>
     <div> Uni nft tickUpper: {tickUpper_.toString()} </div>
