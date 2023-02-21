@@ -13,7 +13,7 @@ import crabStrategyV2Abi from '../../abis/crabStrategyV2.json'
 const useInitAccount = () => {
   // TODO: only handling one vault here. For multiple vaults use subgraph 
   // TODO: add in bull
-  // TODO: add in crab/$ LPs (need to be careful with decimals and token0/token1)
+  // TODO: add in crab/$ LPs ( areful with decimals and token0/token1)
   usePoolStore()
   
   const setOsqthBalance = useAccountStore(s => s.setOsqthBalance)
@@ -93,9 +93,9 @@ const useInitAccount = () => {
       functionName: 'totalSupply',
     })
 
-  // console.log(crabVaultDetails)
+  console.log(crabVaultDetails)
   // Look through crab holdings to eth and squeeth 
-  const crabVaultEth = crabVaultDetails[2]
+  const crabVaultEth = crabVaultDetails[2] 
   const crabVaultOsqth = crabVaultDetails[3]
   // console.log(crabVaultOsqth?.toString())
   // const crabVaultEth = BIG_ZERO
@@ -128,8 +128,6 @@ const useInitAccount = () => {
     setWethBalance((wethBalance as unknown as BigNumber) || BIG_ZERO)
     setEthBalance((ethBalance as unknown as BigNumber) || BIG_ZERO)
     setCrabBalance((crabBalance as unknown as BigNumber) || BIG_ZERO)
-    console.log('setting crabEth')
-    console.log(crabEth?.toString())
     setCrabEth((crabEth as unknown as BigNumber) || BIG_ZERO)
     setCrabOsqth((crabOsqth as unknown as BigNumber) || BIG_ZERO)
     setNumberOfVaults((numOfVaults as unknown as BigNumber) || BIG_ZERO)

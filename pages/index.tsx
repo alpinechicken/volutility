@@ -10,7 +10,6 @@ import quoterAbi from '../abis/quoter.json';
 
 import { INDEX_SCALE, FUNDING_PERIOD, MAX_UINT, ETH_OSQTH_FEE } from '../constants/numbers';
 import { OSQUEETH, WETH, CONTROLLER, SQUEETH_UNI_POOL, WETH_USDC_POOL, SHORT_SQUEETH, SWAP_ROUTER, UNI_NFT_MANAGER, QUOTER } from '../constants/address';
-// import { CONTROLLER_CONTRACT, OSQUEETH_CONTRACT, WETH_CONTRACT, CRAB_V2_CONTRACT } from '../constants/contracts'
 
 import { CHAIN_ID } from '../constants/numbers';
 import { convertBigNumber, formatBigNumber, toBigNumber, calculateIV, formatNumber, wdiv } from '../utils/math'
@@ -31,15 +30,14 @@ const Home: NextPage = () => {
   // This account
   const {isConnected, address: myAddr} = useAccount();
 
-
   // Start up controller, account, pool
-  useController()
+  const {getControllerData} = useController()
+  const {getPoolData} = usePool()
   useInitAccount()
-  usePool()
 
   const quoter = useQuoter()
 
-
+  // Current pool tick
   const tick = usePoolStore(s => s.tick)
 
   const nf = useControllerStore(s => s.normFactor)
@@ -76,10 +74,11 @@ const Home: NextPage = () => {
   // Handle change of buy $ vega amount
   const handleChange = async (event) => {
 
-    if (event.target.value!=0){
+    if (event.target.value!=0 ){
       setBuyAmount(event.target.value);
-      setOutputAmount(1e18*event.target.value/(oSqthEthPrice*  vega   * ethPrice));
-      setInputAmount(await quoteExactOut(quoter, WETH, OSQUEETH, (1e18*event.target.value/(oSqthEthPrice*  vega   * ethPrice)).toString(), 3000))
+      const outAmt_ = (1e18*event.target.value/(oSqthEthPrice*  vega   * ethPrice)).toFixed(0)
+      setOutputAmount(outAmt_);
+      setInputAmount(await quoteExactOut(quoter, WETH, OSQUEETH, outAmt_.toString(),ETH_OSQTH_FEE ))
     }
   }
 
@@ -116,7 +115,7 @@ const Home: NextPage = () => {
     recipient: myAddr,
     deadline: BigNumber.from(Math.floor(Date.now() / 1000 + 86400)).toString(),
     amountOut: outputAmount.toString(),
-    amountInMaximum: ((1+slippage)*1e18*buyAmount/( vega   * ethPrice) ||0).toString() ,
+    amountInMaximum: ((1+slippage)*inputAmount ||0).toString() ,
     sqrtPriceLimitX96: BigNumber.from(0).toString(),
   }
 
@@ -134,34 +133,44 @@ const Home: NextPage = () => {
     <div>
           <br></br>
     <div> CHAIN_ID: {CHAIN_ID}</div>
-    <div> Osqth balance: {osqBal_?.formatted} </div>
-    <div> weth bal : {wethBal_?.formatted}</div>
+    <h4>State</h4>
+
     <div> normFactor: {normFactor}</div>
     <div> eth price (from controller): {ethPrice}</div>
     <div> osqth price (from slot0): {oSqthEthPrice} </div>
     <div> daily funding (from slot0): {dailyFunding} </div>
     <div>vega (from slot0): {vega} </div>
+
+    <h4>Balances</h4>
+    <div> Osqth balance: {osqBal_?.formatted} </div>
+    <div> weth bal : {wethBal_?.formatted}</div>
     <div>crab balance: {crabBal_?.formatted} </div>
+    <h5>Crab lookthrough</h5>
+
     <div>crab eth: {crabEth_.toString()} </div>
     <div>crab osqth: {crabOsqth_.toString()} </div>
 
+    <h5> Uniswap LP lookthrough</h5>
+    <div> Uniswap eth: {uniswapEth_.toString()} </div>
+    <div> Uniswap osqth: {uniswapOsqth_.toString()} </div>
+
+    <h4>Vaults</h4>
     <div>number of vaults: {numOfVaults_?.toString()} </div>
     <div>vaultId: {vaultId_?.toString()} </div>
     <div>vault collateral: {vaultCollateral_.toString()} </div>
     <div>vault debt: {vaultDebt_.toString()} </div>
     <div>vault uni nft: {uniNftId_.toString()} </div>
-    <div>Uniswap eth: {uniswapEth_.toString()} </div>
-    <div>Uniswap osqth: {uniswapOsqth_.toString()} </div>
-    <div>Crab eth: {crabEth_.toString()} </div>
-    <div>Crab oSqth: {crabOsqth_.toString()} </div>
 
+    <h4>Net exposure</h4>
     <div>net osqth: {netOsqth.toString()} </div>
     <div>net weth and eth: {netWethAndEth.toString()} </div>
-    <div> Long squeeth dollar vega: {vega * oSqthBalance * oSqthEthPrice * ethPrice}</div>
-    <div> Uni nft tickLower: {tickLower_.toString()} </div>
+    <div> Net dollar vega: {vega * netOsqth * oSqthEthPrice * ethPrice}</div>
+    <div> Net eth delta: {2* netOsqth *  oSqthEthPrice + netWethAndEth }</div>
+    {/* <div> Uni nft tickLower: {tickLower_.toString()} </div>
     <div> Uni nft tickUpper: {tickUpper_.toString()} </div>
-    <div> Uni nft liquidity: {liquidity_.toString()} </div>
-    <br></br>
+    <div> Uni nft liquidity: {liquidity_.toString()} </div> */}
+    <h4>Quote</h4>
+
     <div> outputAmount (oSQTH): {outputAmount.toString()} </div>
     <div> inputAmount (WETH) from quote : {inputAmount.toString()}</div>
     <div> Quote price: {(quotePrice).toString()} </div>
@@ -213,12 +222,10 @@ const Home: NextPage = () => {
                 </button> 
           </div>
 
-
           <br></br>
           <div> Vol on uniswap : {(vol*100).toFixed(1)}% </div>
-          <div> Vol for this size: {(quoteVol*100).toFixed(1)}% </div>
+          <div> Vol for this trade size: {(quoteVol*100).toFixed(1)}% </div>
           <div> Vol impact: {((quoteVol-vol)*100).toFixed(1).toString()}% </div>
-
 
           <br></br>
 
