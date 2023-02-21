@@ -13,7 +13,7 @@ import crabStrategyV2Abi from '../../abis/crabStrategyV2.json'
 const useInitAccount = () => {
   // TODO: only handling one vault here. For multiple vaults use subgraph 
   // TODO: add in bull
-  // TODO: add in crab/$ LPs ( areful with decimals and token0/token1)
+  // TODO: add in crab/$ LPs ( careful with decimals and token0/token1)
   usePoolStore()
   
   const setOsqthBalance = useAccountStore(s => s.setOsqthBalance)
@@ -23,13 +23,10 @@ const useInitAccount = () => {
   const setCrabEth = useAccountStore(s => s.setCrabEth)
   const setCrabOsqth = useAccountStore(s => s.setCrabOsqth)
   const setNumberOfVaults = useAccountStore(s => s.setNumberOfVaults)
-  const setVaultId = useAccountStore(s => s.setVaultId)
+  const setVaultIds = useAccountStore(s => s.setVaultIds)
   const setVaultCollateral = useAccountStore(s => s.setVaultCollateral)
   const setVaultDebt = useAccountStore(s => s.setVaultDebt)
-  const setUniNftId = useAccountStore(s => s.setUniNftId)
-  const setTickLower = useAccountStore(s => s.setTickLower)
-  const setTickUpper = useAccountStore(s => s.setTickUpper)
-  const setLiquidity = useAccountStore(s => s.setLiquidity)
+  const setUniNftIds = useAccountStore(s => s.setUniNftIds)
   const setUniswapEth = useAccountStore(s => s.setUniswapEth)
   const setUniswapOsqth = useAccountStore(s => s.setUniswapOsqth)
 
@@ -97,7 +94,6 @@ const useInitAccount = () => {
   // Look through crab holdings to eth and squeeth 
   const crabVaultEth = crabVaultDetails[2] 
   const crabVaultOsqth = crabVaultDetails[3]
-  // // console.log(crabVaultOsqth?.toString())
   // const crabVaultEth = BIG_ZERO
   // const crabVaultOsqth = BIG_ZERO
   const crabEth = crabBalance?.value.mul(crabVaultEth).div(crabTotalSupply)
@@ -131,13 +127,12 @@ const useInitAccount = () => {
     setCrabEth((crabEth as unknown as BigNumber) || BIG_ZERO)
     setCrabOsqth((crabOsqth as unknown as BigNumber) || BIG_ZERO)
     setNumberOfVaults((numOfVaults as unknown as BigNumber) || BIG_ZERO)
-    setVaultId((vaultId as unknown as BigNumber) || BIG_ZERO)
+    // TODO: make this an array
+    setVaultIds((vaultId as unknown as BigNumber) || BIG_ZERO)
     setVaultDebt((vaultData?.shortAmount as unknown as BigNumber) || BIG_ZERO)
     setVaultCollateral((vaultData?.collateralAmount as unknown as BigNumber) || BIG_ZERO)
-    setUniNftId((vaultData?.NftCollateralId as unknown as BigNumber) || BIG_ZERO)
-    setTickLower((uniNftData?.tickLower as unknown as BigNumber) || BIG_ZERO)
-    setTickUpper((uniNftData?.tickUpper as unknown as BigNumber) || BIG_ZERO)
-    setLiquidity((uniNftData?.liquidity as unknown as BigNumber) || BIG_ZERO)
+    // TODO: make this an array
+    setUniNftIds((vaultData?.NftCollateralId as unknown as BigNumber) || BIG_ZERO)
     setUniswapEth((uniswapEth as unknown as BigNumber) || BIG_ZERO)
     setUniswapOsqth((uniswapOsqth as unknown as BigNumber) || BIG_ZERO)
     // [setOsqthBalance, setWethBalance, setCrabBalance, setNumberOfVaults, setVaultId, setVaultDebt, setVaultCollateral, setUniNftId]

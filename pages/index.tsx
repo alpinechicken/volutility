@@ -53,11 +53,8 @@ const Home: NextPage = () => {
   const vaultDebt_ = useAccountStore(s => s.vaultDebt)
   const vaultCollateral_ = useAccountStore(s => s.vaultCollateral)
   const numOfVaults_ = useAccountStore(s => s.numberOfVaults)
-  const vaultId_ = useAccountStore(s => s.vaultId)
-  const uniNftId_ = useAccountStore(s => s.uniNftId)
-  const tickLower_ = useAccountStore(s => s.tickLower)
-  const tickUpper_ = useAccountStore(s => s.tickUpper)
-  const liquidity_ = useAccountStore(s => s.liquidity)
+  const vaultIds_ = useAccountStore(s => s.vaultIds)
+  const uniNftIds_ = useAccountStore(s => s.uniNftIds)
   const uniswapEth_ = useAccountStore(s => s.uniswapEth)
   const uniswapOsqth_ = useAccountStore(s => s.uniswapOsqth)
 
@@ -155,10 +152,10 @@ const Home: NextPage = () => {
 
     <h4>Vaults</h4>
     <div>number of vaults: {numOfVaults_?.toString()} </div>
-    <div>vaultId: {vaultId_?.toString()} </div>
+    <div>vaultIds: {vaultIds_?.toString()} </div>
     <div>vault collateral: {vaultCollateral_.toString()} </div>
     <div>vault debt: {vaultDebt_.toString()} </div>
-    <div>vault uni nft: {uniNftId_.toString()} </div>
+    <div>vault uni nfts: {uniNftIds_.toString()} </div>
 
     <h4>Net exposure</h4>
     <div>net osqth: {netOsqth.toString()} </div>
@@ -212,7 +209,7 @@ const Home: NextPage = () => {
             value={buyAmount}
           />
 
-      <h4>${(vega * netOsqth * oSqthEthPrice * ethPrice).toFixed(2) } -----> ${(vega * netOsqth * oSqthEthPrice * ethPrice + buyAmount*1).toFixed(2)}</h4>
+      <h4>[${(vega * netOsqth * oSqthEthPrice * ethPrice).toFixed(2) } -----> ${(vega * netOsqth * oSqthEthPrice * ethPrice + buyAmount*1).toFixed(2)}]</h4>
 
 
           <div> <button suppressHydrationWarning

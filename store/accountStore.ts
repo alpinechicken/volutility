@@ -12,13 +12,10 @@ interface AccountState {
   crabEth: BigNumber
   crabOsqth: BigNumber
   numberOfVaults: BigNumber
-  vaultId: BigNumber
+  vaultIds: BigNumber
   vaultCollateral: BigNumber
   vaultDebt: BigNumber
-  uniNftId: BigNumber
-  tickLower: BigNumber
-  tickUpper: BigNumber
-  liquidity:  BigNumber
+  uniNftIds: BigNumber
   uniswapEth: BigNumber
   uniswapOsqth: BigNumber
   setAddress: (addr: string) => void
@@ -30,13 +27,10 @@ interface AccountState {
   setCrabEth: (ce: BigNumber) => void
   setCrabOsqth: (co: BigNumber) => void
   setNumberOfVaults: (nv: BigNumber) => void
-  setVaultId: (vi: BigNumber) => void
+  setVaultIds: (vi: BigNumber) => void
   setVaultCollateral: (vc: BigNumber) => void
   setVaultDebt: (vd: BigNumber) => void
-  setUniNftId: (ui: BigNumber) => void
-  setTickLower: (tl: BigNumber) => void
-  setTickUpper: (tu: BigNumber) => void
-  setLiquidity: (l: BigNumber) => void
+  setUniNftIds: (ui: BigNumber) => void
   setUniswapEth: (uw: BigNumber) => void
   setUniswapOsqth: (uo: BigNumber) => void
 }
@@ -51,13 +45,10 @@ const useAccountStore = create<AccountState>(set => ({
   crabEth: BIG_ZERO,
   crabOsqth: BIG_ZERO,
   numberOfVaults: BIG_ZERO,
-  vaultId: BIG_ZERO,
+  vaultIds: BIG_ZERO,
   vaultDebt: BIG_ZERO,
   vaultCollateral: BIG_ZERO,
-  uniNftId: BIG_ZERO,
-  tickLower: BIG_ZERO,
-  tickUpper: BIG_ZERO,
-  liquidity: BIG_ZERO,
+  uniNftIds: BIG_ZERO,
   uniswapEth: BIG_ZERO,
   uniswapOsqth: BIG_ZERO,  
   setAddress: (addr: string) => set({ address: addr }),
@@ -69,13 +60,10 @@ const useAccountStore = create<AccountState>(set => ({
   setCrabEth: ce => set({crabEth: ce}),
   setCrabOsqth: co => set({crabOsqth: co}),
   setNumberOfVaults: nv => set({numberOfVaults: nv}),
-  setVaultId: vi => set({vaultId: vi}),
+  setVaultIds: vi => set({vaultIds: vi}),
   setVaultCollateral: vc => set({vaultCollateral: vc}),
   setVaultDebt: vd => set({vaultDebt: vd}),
-  setUniNftId: ui => set({uniNftId: ui}),
-  setTickLower: tl => set({tickLower: tl}),
-  setTickUpper: tu => set({tickUpper: tu}),
-  setLiquidity: l => set({liquidity: l}),
+  setUniNftIds: ui => set({uniNftIds: ui}),
   setUniswapEth: ue => set({uniswapEth: ue}),
   setUniswapOsqth: uo => set({uniswapOsqth: uo})
 }))
