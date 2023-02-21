@@ -12,7 +12,8 @@ import crabStrategyV2Abi from '../../abis/crabStrategyV2.json'
 
 const useInitAccount = () => {
   // TODO: only handling one vault here. For multiple vaults use subgraph 
-  
+  // TODO: add in bull
+  // TODO: add in crab/$ LPs (need to be careful with decimals and token0/token1)
   usePoolStore()
   
   const setOsqthBalance = useAccountStore(s => s.setOsqthBalance)
@@ -92,7 +93,7 @@ const useInitAccount = () => {
       functionName: 'totalSupply',
     })
 
-  console.log(crabVaultDetails)
+  // console.log(crabVaultDetails)
   // Look through crab holdings to eth and squeeth 
   const crabVaultEth = crabVaultDetails[2]
   const crabVaultOsqth = crabVaultDetails[3]
