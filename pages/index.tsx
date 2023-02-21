@@ -97,7 +97,6 @@ const Home: NextPage = () => {
   const dailyFunding = vol**2/365.25
   const vega = 2*vol*FUNDING_PERIOD/365.25 /100
 
-
   const oSqthBalance = osqBal_?.formatted 
   // Just using one vault (TODO: add multiple vaults)
   const netOsqth = oSqthBalance- (vaultDebt_|| 0)/1e18 +(uniswapOsqth_ || 0)/1e18 - (crabOsqth_ ||0)/1e18
@@ -213,6 +212,9 @@ const Home: NextPage = () => {
             value={buyAmount}
           />
 
+      <h4>${(vega * netOsqth * oSqthEthPrice * ethPrice).toFixed(2) } -----> ${(vega * netOsqth * oSqthEthPrice * ethPrice + buyAmount*1).toFixed(2)}</h4>
+
+
           <div> <button suppressHydrationWarning
                   style ={{ marginTop: 24}}
                   className="button"
@@ -221,7 +223,6 @@ const Home: NextPage = () => {
                   Buy some vega
                 </button> 
           </div>
-
           <br></br>
           <div> Vol on uniswap : {(vol*100).toFixed(1)}% </div>
           <div> Vol for this trade size: {(quoteVol*100).toFixed(1)}% </div>

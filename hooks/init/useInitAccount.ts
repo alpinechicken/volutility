@@ -93,11 +93,11 @@ const useInitAccount = () => {
       functionName: 'totalSupply',
     })
 
-  console.log(crabVaultDetails)
+  // console.log(crabVaultDetails)
   // Look through crab holdings to eth and squeeth 
   const crabVaultEth = crabVaultDetails[2] 
   const crabVaultOsqth = crabVaultDetails[3]
-  // console.log(crabVaultOsqth?.toString())
+  // // console.log(crabVaultOsqth?.toString())
   // const crabVaultEth = BIG_ZERO
   // const crabVaultOsqth = BIG_ZERO
   const crabEth = crabBalance?.value.mul(crabVaultEth).div(crabTotalSupply)
