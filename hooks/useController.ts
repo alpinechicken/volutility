@@ -4,7 +4,7 @@ import { CONTROLLER_CONTRACT } from '../constants/contracts'
 // import { CONTROLLER } from '../constants/address'
 // import controllerAbi from '../abis/controller.json'
 import useControllerStore from '../store/controllerStore'
-import { INDEX_SCALE } from '../constants/numbers'
+import { BIG_ZERO, INDEX_SCALE } from '../constants/numbers'
 
 const useController = () => {
   const setNf = useControllerStore(s => s.setNormFactor)
@@ -30,15 +30,25 @@ const useController = () => {
         functionName: 'getDenormalizedMark',
         args: [1],
       },
-    ],  enabled: false,
+    ],  enabled: true,
 
   })
 
   const updateControllerData = React.useCallback(async () => {
-    console.log('reload controller state')
-    const _nf = data[0] 
-    const _index = data[1]
-    const _mark = data[2]
+    // console.log('reload controller state')
+    // console.log(CONTROLLER_CONTRACT.address)
+    // console.log(data)
+    // console.log(isLoading)
+    let _nf = BIG_ZERO
+    let _index = BIG_ZERO
+    let _mark = BIG_ZERO
+    if (data !== undefined){
+       _nf = data[0] 
+       _index = data[1]
+       _mark = data[2]
+    } else{
+      console.log('cant load controller')
+    }
     setNf(_nf)
     setIndexPrice(_index.mul(INDEX_SCALE).mul(INDEX_SCALE))
     setMarkPrice(_mark.mul(INDEX_SCALE).mul(INDEX_SCALE))
