@@ -127,7 +127,7 @@ const Home: NextPage = () => {
   const detailView = () => (
 
     <div>
-          <br></br>
+    <br></br>
     <div> CHAIN_ID: {CHAIN_ID}</div>
     <h4>State</h4>
 
@@ -162,9 +162,6 @@ const Home: NextPage = () => {
     <div>net weth and eth: {netWethAndEth.toString()} </div>
     <div> Net dollar vega: {vega * netOsqth * oSqthEthPrice * ethPrice}</div>
     <div> Net eth delta: {2* netOsqth *  oSqthEthPrice + netWethAndEth }</div>
-    {/* <div> Uni nft tickLower: {tickLower_.toString()} </div>
-    <div> Uni nft tickUpper: {tickUpper_.toString()} </div>
-    <div> Uni nft liquidity: {liquidity_.toString()} </div> */}
     <h4>Quote</h4>
 
     <div> outputAmount (oSQTH): {outputAmount.toString()} </div>
@@ -173,9 +170,6 @@ const Home: NextPage = () => {
     </div>
   )
   
-
-
-
   return (
     <div className={styles.container}>
       <Head>

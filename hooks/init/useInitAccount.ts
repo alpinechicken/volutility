@@ -63,7 +63,7 @@ const useInitAccount = () => {
     address: SHORT_SQUEETH,
     abi: shortSqueethAbi,
     functionName: 'tokenOfOwnerByIndex',
-    args: [myAddr, 1],
+    args: [myAddr, 0],
     })
 
   const { data: vaultData} = useContractRead({
@@ -90,26 +90,36 @@ const useInitAccount = () => {
       functionName: 'totalSupply',
     })
 
-  // console.log(crabVaultDetails)
+  console.log(crabVaultDetails)
   // Look through crab holdings to eth and squeeth 
-  const crabVaultEth = crabVaultDetails[2] 
-  const crabVaultOsqth = crabVaultDetails[3]
-  // const crabVaultEth = BIG_ZERO
-  // const crabVaultOsqth = BIG_ZERO
+  let crabVaultEth = BIG_ZERO
+  let crabVaultOsqth = BIG_ZERO
+  if (crabVaultDetails !== undefined){
+      crabVaultEth = crabVaultDetails[2] 
+      crabVaultOsqth = crabVaultDetails[3]
+    } else {
+      console.log('No crab :/')
+    }
+
   const crabEth = crabBalance?.value.mul(crabVaultEth).div(crabTotalSupply)
   const crabOsqth = crabBalance?.value.mul(crabVaultOsqth).div(crabTotalSupply)
 
+  let uniswapEth = BIG_ZERO
+  let uniswapOsqth = BIG_ZERO
+  if (uniNftData !== undefined){
+    const currentTick = usePoolStore(s => s.tick)
+    // TODO: switch this for isWethToken0 (but same direction for goerli and mainnet currently)
+    const p = 1.0001**-currentTick  
+    const pa = 1.0001**-uniNftData?.tickUpper
+    const pb = 1.0001**-uniNftData?.tickLower
+    // console.log('p, pa, pb')
+    // console.log(p, pa, pb)
+    uniswapEth = uniNftData?.liquidity * (Math.sqrt(p) - Math.sqrt(pa))
+    uniswapOsqth = uniNftData?.liquidity * (Math.sqrt(pb) - Math.sqrt(p))/(Math.sqrt(p)* Math.sqrt(pb))
+  } else {
+    console.log('No uni nft :/')
+  }
 
-  const currentTick = usePoolStore(s => s.tick)
-  // TODO: switch this for isWethToken0 (but same direction for goerli and mainnet currently)
-  const p = 1.0001**-currentTick  
-  const pa = 1.0001**-uniNftData?.tickUpper
-  const pb = 1.0001**-uniNftData?.tickLower
-  // console.log('p, pa, pb')
-  // console.log(p, pa, pb)
-  const uniswapEth = uniNftData?.liquidity * (Math.sqrt(p) - Math.sqrt(pa))
-
-  const uniswapOsqth = uniNftData?.liquidity * (Math.sqrt(pb) - Math.sqrt(p))/(Math.sqrt(p)* Math.sqrt(pb))
   // console.log('crabBalance')
   // console.log(crabBalance?.value.toString())
   // console.log(crabTotalSupply?.toString())
