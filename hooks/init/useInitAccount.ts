@@ -116,8 +116,8 @@ const useInitAccount = () => {
     // console.log(p, pa, pb)
     uniswapEth = uniNftData?.liquidity * (Math.sqrt(p) - Math.sqrt(pa))
     uniswapOsqth = uniNftData?.liquidity * (Math.sqrt(pb) - Math.sqrt(p))/(Math.sqrt(p)* Math.sqrt(pb))
-    // console.log('uni osqth')
-    // console.log(uniswapOsqth.toString())
+    console.log('uni osqth')
+    console.log(uniswapOsqth.toString())
   } else {
     console.log('No uni nft :/')
   }
